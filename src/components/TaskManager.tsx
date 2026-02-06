@@ -4,11 +4,15 @@ import {
   getDatabase,
   taskService,
   projectRepo,
+} from '@stridetime/core';
+
+import {
   TaskDifficulty,
   TaskStatus,
   type Task,
-  type Project,
-} from '@stridetime/core';
+  type Project
+} from "@stridetime/types";
+
 import './TaskManager.css';
 
 interface TaskManagerProps {

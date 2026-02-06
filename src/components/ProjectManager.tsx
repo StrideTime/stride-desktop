@@ -3,10 +3,13 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
   projectRepo,
-  workspaceRepo,
-  type Project,
-  type Workspace,
+  workspaceRepo
 } from '@stridetime/core';
+import type {
+  Project,
+  Workspace
+} from "@stridetime/types";
+
 import './ProjectManager.css';
 
 interface ProjectManagerProps {

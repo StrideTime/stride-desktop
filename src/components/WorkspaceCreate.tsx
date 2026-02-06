@@ -3,9 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
   workspaceRepo,
-  WorkspaceType,
-  type Workspace,
 } from '@stridetime/core';
+import {
+  WorkspaceType,
+  type Workspace
+} from "@stridetime/types";
+
 import './WorkspaceCreate.css';
 
 interface WorkspaceCreateProps {

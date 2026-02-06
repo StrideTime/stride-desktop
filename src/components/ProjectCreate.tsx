@@ -4,9 +4,12 @@ import {
   getDatabase,
   projectRepo,
   workspaceRepo,
-  type Project,
-  type Workspace,
 } from '@stridetime/core';
+import type {
+  Project,
+  Workspace
+} from "@stridetime/types";
+
 import './ProjectCreate.css';
 
 interface ProjectCreateProps {

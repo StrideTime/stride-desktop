@@ -5,9 +5,11 @@ import {
   taskService,
   projectRepo,
   type CreateTaskParams,
-  type Task,
-  type Project,
 } from '@stridetime/core';
+import type {
+  Task,
+  Project
+} from "@stridetime/types";
 import { TaskDifficulty, TaskStatus } from '@stridetime/types';
 import './TaskList.css';
 

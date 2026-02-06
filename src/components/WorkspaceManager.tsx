@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
-  workspaceRepo,
-  WorkspaceType,
-  type Workspace,
+  workspaceRepo
 } from '@stridetime/core';
+
+import {
+  WorkspaceType,
+  type Workspace
+} from "@stridetime/types";
+
 import './WorkspaceManager.css';
 
 interface WorkspaceManagerProps {
