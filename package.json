@@ -15,7 +15,8 @@
   "db:reset": "./scripts/reset-db.sh",
   "logs": "docker compose logs -f",
   "studio": "open http://studio.stride.local",
-  "mailpit": "open http://localhost:8025"
+  "mailpit": "open http://localhost:8025",
+  "typecheck": "tsc --noEmit"
  },
  "dependencies": {
   "@sentry/react": "^7.99.0",
