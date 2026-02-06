@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8" />
+  <title>Reset your Stride password</title>
+  <style>
+   body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+   .button {
+    background: #007bff;
+    color: white !important;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 50px;
+    display: inline-block;
+    font-size: 14px;
+   }
+   .button:hover {
+    background: #0056b3;
+   }
+  </style>
+ </head>
+ <body>
+  <h2>Reset Your Password</h2>
+  <p>Hi,</p>
+  <p>
+   We received a request to reset your password. Click the button below to create a new password:
+  </p>
+  <p style="margin: 20px 0">
+   <a href="{{ .ConfirmationURL }}" class="button">Reset Password</a>
+  </p>
+  <p>This link expires in 1 hour.</p>
+  <p>If you didn't request this, please ignore this email.</p>
+  <p>Best regards,<br />The Stride Team</p>
+ </body>
+</html>

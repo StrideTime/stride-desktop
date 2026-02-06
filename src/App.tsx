@@ -1,51 +1,74 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./contexts/AuthContext";
+import { Auth } from "./components/Auth";
+import { Dashboard } from "./components/Dashboard";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
+import { ResetPasswordRoute } from "./components/ResetPasswordRoute";
+import { initAppDatabase } from "./lib/db";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+ const { loading: authLoading } = useAuth();
+ const [dbInitialized, setDbInitialized] = useState(false);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+ useEffect(() => {
+  // Initialize database on app start
+  initAppDatabase()
+   .then(() => {
+    console.log("Database initialized successfully");
+    setDbInitialized(true);
+   })
+   .catch((error) => {
+    console.error("Failed to initialize database:", error);
+    // Still set as initialized to allow app to load (can retry later)
+    setDbInitialized(true);
+   });
+ }, []);
 
+ const loading = authLoading || !dbInitialized;
+
+ if (loading) {
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+   <div className="loading-container">
+    <div className="loading-spinner"></div>
+    <p>Loading...</p>
+   </div>
   );
+ }
+
+ return (
+  <Router>
+   <Routes>
+    {/* Public login route */}
+    <Route
+     path="/login"
+     element={
+      <PublicRoute>
+       <Auth />
+      </PublicRoute>
+     }
+    />
+
+    {/* Reset password route - only accessible with valid token */}
+    <Route path="/reset-password" element={<ResetPasswordRoute />} />
+
+    {/* Protected dashboard route - root path */}
+    <Route
+     path="/"
+     element={
+      <ProtectedRoute>
+       <Dashboard />
+      </ProtectedRoute>
+     }
+    />
+
+    {/* Catch all - redirect to home */}
+    <Route path="*" element={<Navigate to="/" replace />} />
+   </Routes>
+  </Router>
+ );
 }
 
 export default App;

@@ -1,0 +1,147 @@
+.project-create-container {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.project-create-container h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.project-create-loading,
+.project-create-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.project-create-empty p {
+  margin-bottom: 1rem;
+}
+
+.project-error {
+  padding: 0.75rem 1rem;
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  color: #dc2626;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.project-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.project-create-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-create-form label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.project-create-form input[type="text"],
+.project-create-form textarea,
+.project-create-form select {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.project-create-form input[type="text"]:focus,
+.project-create-form textarea:focus,
+.project-create-form select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.project-create-form textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 80px;
+}
+
+.color-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.project-create-form input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.color-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-button {
+  background: #3b82f6;
+  color: white;
+  flex: 1;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.submit-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.625rem 1rem;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

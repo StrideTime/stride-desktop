@@ -1,26 +1,45 @@
 {
-  "name": "stride-desktop",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
-  },
-  "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
-  },
-  "devDependencies": {
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
-    "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "@tauri-apps/cli": "^2"
-  }
+ "name": "stride-desktop",
+ "private": true,
+ "version": "0.1.0",
+ "type": "module",
+ "scripts": {
+  "dev": "vite",
+  "build": "tsc && vite build",
+  "preview": "vite preview",
+  "tauri": "tauri",
+  "setup": "tsx scripts/setup-cli.ts",
+  "start": "./scripts/start-local.sh",
+  "stop": "supabase stop && docker compose down",
+  "reset": "supabase db reset && ./scripts/start-local.sh",
+  "db:reset": "./scripts/reset-db.sh",
+  "logs": "docker compose logs -f",
+  "studio": "open http://studio.stride.local",
+  "mailpit": "open http://localhost:8025"
+ },
+ "dependencies": {
+  "@sentry/react": "^7.99.0",
+  "@stridetime/core": "^0.1.14",
+  "@stridetime/types": "^0.1.21",
+  "@supabase/supabase-js": "^2.95.0",
+  "@tauri-apps/api": "^2",
+  "@tauri-apps/plugin-opener": "^2",
+  "react": "^19.1.0",
+  "react-dom": "^19.1.0",
+  "react-router-dom": "^7.13.0"
+ },
+ "devDependencies": {
+  "@tauri-apps/cli": "^2",
+  "@types/inquirer": "^9.0.7",
+  "@types/js-yaml": "^4.0.9",
+  "@types/react": "^19.1.8",
+  "@types/react-dom": "^19.1.6",
+  "@vitejs/plugin-react": "^4.6.0",
+  "chalk": "^5.3.0",
+  "inquirer": "^9.2.12",
+  "js-yaml": "^4.1.0",
+  "tsx": "^4.7.0",
+  "typescript": "~5.8.3",
+  "vite": "^7.0.4"
+ }
 }
