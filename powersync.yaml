@@ -1,6 +1,10 @@
 # PowerSync Service Configuration for Stride Desktop
 # Local development configuration
 
+# Opt out of anonymous telemetry
+telemetry:
+  disable_telemetry_sharing: true
+
 # Source database replication settings
 replication:
   connections:
@@ -9,11 +13,11 @@ replication:
       sslmode: disable
 
 # Bucket storage database configuration
-# PowerSync stores sync state in a separate schema in the same database
+# Using the same Postgres instance for bucket storage (requires Postgres 14+)
 storage:
   type: postgresql
   uri: !env PS_DATABASE_URL
-  schema: powersync  # PowerSync will use a separate schema for its tables
+  sslmode: disable
 
 # API server port
 port: 8080
@@ -24,60 +28,30 @@ sync_rules:
     bucket_definitions:
       # User-specific bucket - each user gets their own data
       user_data:
-        parameters:
-          - user_id
+        parameters: SELECT request.user_id() as user_id
         data:
-          # Users - only own user data
-          - SELECT * FROM users WHERE id = token_parameters.user_id
+          - SELECT * FROM users WHERE id = bucket.user_id
+          - SELECT * FROM workspaces WHERE owner_user_id = bucket.user_id
+          - SELECT * FROM workspace_members WHERE user_id = bucket.user_id
+          - SELECT * FROM projects WHERE user_id = bucket.user_id
+          - SELECT * FROM tasks WHERE user_id = bucket.user_id
+          - SELECT * FROM task_types WHERE user_id = bucket.user_id
+          - SELECT * FROM time_entries WHERE user_id = bucket.user_id
+          - SELECT * FROM daily_summaries WHERE user_id = bucket.user_id
+          - SELECT * FROM user_preferences WHERE user_id = bucket.user_id
+          - SELECT * FROM user_subscriptions WHERE user_id = bucket.user_id
 
-          # Workspaces - personal or team workspaces
-          - SELECT w.* FROM workspaces w
-            WHERE w.owner_user_id = token_parameters.user_id
-            OR EXISTS (
-              SELECT 1 FROM workspace_members wm
-              WHERE wm.workspace_id = w.id AND wm.user_id = token_parameters.user_id
-            )
-
-          # Projects - from accessible workspaces
-          - SELECT p.* FROM projects p
-            INNER JOIN workspaces w ON p.workspace_id = w.id
-            WHERE w.owner_user_id = token_parameters.user_id
-            OR EXISTS (
-              SELECT 1 FROM workspace_members wm
-              WHERE wm.workspace_id = w.id AND wm.user_id = token_parameters.user_id
-            )
-
-          # Tasks - user's own tasks
-          - SELECT * FROM tasks WHERE user_id = token_parameters.user_id
-
-          # Task types - user's own types
-          - SELECT * FROM task_types WHERE user_id = token_parameters.user_id
-
-          # Time entries - user's own entries
-          - SELECT * FROM time_entries WHERE user_id = token_parameters.user_id
-
-          # Daily summaries - user's own summaries
-          - SELECT * FROM daily_summaries WHERE user_id = token_parameters.user_id
-
-          # User preferences - user's own preferences
-          - SELECT * FROM user_preferences WHERE user_id = token_parameters.user_id
-
-          # User subscriptions - user's own subscription
-          - SELECT * FROM user_subscriptions WHERE user_id = token_parameters.user_id
-
-      # Global bucket - shared read-only data
+      # Global bucket - shared read-only data (synced to all users)
       global:
         data:
-          # Roles - available to all users
           - SELECT * FROM roles
 
 # Client authentication configuration
 client_auth:
   # Using Supabase JWT authentication
+  supabase: true
   jwks_uri: http://host.docker.internal:54321/auth/v1/jwks
   audience: ['authenticated']
-  telemetry:
-    disable_telemetry_sharing: true
 
 # System-level settings
 system:

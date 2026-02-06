@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { createAuthService } from "@stridetime/core";
+import { createAuthService, connectSync, disconnectSync, isSyncEnabled } from "@stridetime/core";
 import type { AuthSession, OAuthProvider } from "@stridetime/types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -36,20 +36,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
 
  useEffect(() => {
-  // Get initial session
-  authService.getCurrentSession().then((session) => {
+  // Get initial session and connect sync if authenticated
+  authService.getCurrentSession().then(async (session) => {
    setSession(session);
    setLoading(false);
+
+   // If there's an existing session on startup, connect sync
+   if (session && isSyncEnabled()) {
+    try {
+     await connectSync();
+     console.log("✓ PowerSync connected (existing session)");
+    } catch (error) {
+     console.error("Failed to connect sync on startup:", error);
+    }
+   }
   });
 
   // Listen for auth changes
-  const unsubscribe = authService.onAuthChange((session, event) => {
+  const unsubscribe = authService.onAuthChange(async (session, event) => {
    console.log("AuthContext - auth event:", event, "session:", !!session);
    setSession(session);
    setLoading(false);
 
    if (event === "PASSWORD_RECOVERY") {
     setIsPasswordRecovery(true);
+   }
+
+   // Connect sync when user signs in
+   if (session && event === "SIGNED_IN" && isSyncEnabled()) {
+    try {
+     await connectSync();
+     console.log("✓ PowerSync connected (sign in)");
+    } catch (error) {
+     console.error("Failed to connect sync after sign in:", error);
+    }
+   }
+
+   // Disconnect sync when user signs out
+   if (!session && event === "SIGNED_OUT") {
+    try {
+     await disconnectSync();
+     console.log("✓ PowerSync disconnected (sign out)");
+    } catch (error) {
+     console.error("Failed to disconnect sync after sign out:", error);
+    }
    }
   });
 
@@ -79,6 +109,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
  };
 
  const signOut = async () => {
+  // Disconnect sync before signing out to ensure clean shutdown
+  if (isSyncEnabled()) {
+   try {
+    await disconnectSync();
+    console.log("✓ PowerSync disconnected (explicit sign out)");
+   } catch (error) {
+    console.error("Failed to disconnect sync on sign out:", error);
+   }
+  }
   await authService.signOut();
   setSession(null);
  };
