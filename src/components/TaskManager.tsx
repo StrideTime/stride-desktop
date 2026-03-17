@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
   taskService,
-  projectRepo,
 } from '@stridetime/core';
 
 import {
@@ -13,7 +12,6 @@ import {
   type Project
 } from "@stridetime/types";
 
-import './TaskManager.css';
 
 interface TaskManagerProps {
   onTasksChange?: () => void;
@@ -51,13 +49,13 @@ export function TaskManager({ onTasksChange }: TaskManagerProps) {
       setLoading(true);
       const db = getDatabase();
 
-      const [userTasks, userProjects] = await Promise.all([
-        taskService.findByUser(db, session.user.id),
-        projectRepo.findByUserId(db, session.user.id),
-      ]);
+      // const [userTasks, userProjects] = await Promise.all([
+      //   taskService.findByUser(db, session.user.id),
+      //   projectRepo.findByUserId(db, session.user.id),
+      // ]);
 
-      setTasks(userTasks);
-      setProjects(userProjects);
+      // setTasks(userTasks);
+      // setProjects(userProjects);
       setError(null);
     } catch (err) {
       console.error('Failed to load data:', err);

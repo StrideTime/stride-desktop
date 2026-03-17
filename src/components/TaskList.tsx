@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
   taskService,
-  projectRepo,
   type CreateTaskParams,
 } from '@stridetime/core';
 import type {
@@ -11,7 +10,6 @@ import type {
   Project
 } from "@stridetime/types";
 import { TaskDifficulty, TaskStatus } from '@stridetime/types';
-import './TaskList.css';
 
 export function TaskList() {
   const { session } = useAuth();
@@ -38,14 +36,14 @@ export function TaskList() {
       const db = getDatabase();
 
       // Load user's projects
-      const userProjects = await projectRepo.findByUserId(db, session.user.id);
-      setProjects(userProjects);
+      // const userProjects = await projectRepo.findByUserId(db, session.user.id);
+      // setProjects(userProjects);
 
-      // Load user's tasks using taskService
-      const userTasks = await taskService.findByUser(db, session.user.id);
-      setTasks(userTasks);
+      // // Load user's tasks using taskService
+      // const userTasks = await taskService.findByUser(db, session.user.id);
+      // setTasks(userTasks);
 
-      setError(null);
+      // setError(null);
     } catch (err) {
       console.error('Failed to load data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load data');

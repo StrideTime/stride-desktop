@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
-  projectRepo,
-  workspaceRepo,
 } from '@stridetime/core';
 import type {
   Project,
   Workspace
 } from "@stridetime/types";
 
-import './ProjectCreate.css';
 
 interface ProjectCreateProps {
   onProjectCreated?: (project: Project) => void;
@@ -39,13 +36,13 @@ export function ProjectCreate({ onProjectCreated, onCancel }: ProjectCreateProps
     try {
       setLoadingWorkspaces(true);
       const db = getDatabase();
-      const userWorkspaces = await workspaceRepo.findByOwner(db, session.user.id);
-      setWorkspaces(userWorkspaces);
+      // const userWorkspaces = await workspaceRepo.findByOwner(db, session.user.id);
+      // setWorkspaces(userWorkspaces);
 
-      // Auto-select first workspace if available
-      if (userWorkspaces.length > 0 && !selectedWorkspaceId) {
-        setSelectedWorkspaceId(userWorkspaces[0].id);
-      }
+      // // Auto-select first workspace if available
+      // if (userWorkspaces.length > 0 && !selectedWorkspaceId) {
+      //   setSelectedWorkspaceId(userWorkspaces[0].id);
+      // }
     } catch (err) {
       console.error('Failed to load workspaces:', err);
       setError(err instanceof Error ? err.message : 'Failed to load workspaces');
@@ -74,14 +71,14 @@ export function ProjectCreate({ onProjectCreated, onCancel }: ProjectCreateProps
       setError(null);
       const db = getDatabase();
 
-      const newProject = await projectRepo.create(db, {
-        workspaceId: selectedWorkspaceId,
-        userId: session.user.id,
-        name: name.trim(),
-        description: description.trim() || null,
-        color: color || null,
-        completionPercentage: 0,
-      });
+      // const newProject = await projectRepo.create(db, {
+      //   workspaceId: selectedWorkspaceId,
+      //   userId: session.user.id,
+      //   name: name.trim(),
+      //   description: description.trim() || null,
+      //   color: color || null,
+      //   completionPercentage: 0,
+      // });
 
       // Reset form
       setName('');
@@ -89,9 +86,9 @@ export function ProjectCreate({ onProjectCreated, onCancel }: ProjectCreateProps
       setColor('#3b82f6');
 
       // Notify parent
-      if (onProjectCreated) {
-        onProjectCreated(newProject);
-      }
+      // if (onProjectCreated) {
+      //   onProjectCreated(newProject);
+      // }
     } catch (err) {
       console.error('Failed to create project:', err);
       setError(err instanceof Error ? err.message : 'Failed to create project');

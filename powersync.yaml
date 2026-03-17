@@ -40,17 +40,29 @@ sync_rules:
           - SELECT * FROM daily_summaries WHERE user_id = bucket.user_id
           - SELECT * FROM user_preferences WHERE user_id = bucket.user_id
           - SELECT * FROM user_subscriptions WHERE user_id = bucket.user_id
+          - SELECT * FROM scheduled_events WHERE user_id = bucket.user_id
+          - SELECT * FROM points_ledger WHERE user_id = bucket.user_id
+          - SELECT * FROM subscription_history WHERE user_id = bucket.user_id
+          - SELECT * FROM goals WHERE user_id = bucket.user_id
+          - SELECT * FROM breaks WHERE user_id = bucket.user_id
+          - SELECT * FROM work_sessions WHERE user_id = bucket.user_id
+          - SELECT * FROM workspace_user_preferences WHERE user_id = bucket.user_id
 
       # Global bucket - shared read-only data (synced to all users)
+      # TODO: Move workspace-scoped tables to workspace-level buckets for better performance
       global:
         data:
           - SELECT * FROM roles
+          - SELECT * FROM teams
+          - SELECT * FROM team_members
+          - SELECT * FROM project_teams
+          - SELECT * FROM workspace_statuses
 
 # Client authentication configuration
 client_auth:
   # Using Supabase JWT authentication
   supabase: true
-  jwks_uri: http://host.docker.internal:54321/auth/v1/jwks
+  jwks_uri: http://host.docker.internal:54321/auth/v1/.well-known/jwks.json
   audience: ['authenticated']
 
 # System-level settings

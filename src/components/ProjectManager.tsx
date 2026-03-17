@@ -2,15 +2,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
-  projectRepo,
-  workspaceRepo
 } from '@stridetime/core';
 import type {
   Project,
   Workspace
 } from "@stridetime/types";
 
-import './ProjectManager.css';
 
 interface ProjectManagerProps {
   onProjectsChange?: () => void;
@@ -42,13 +39,13 @@ export function ProjectManager({ onProjectsChange }: ProjectManagerProps) {
       setLoading(true);
       const db = getDatabase();
 
-      const [userProjects, userWorkspaces] = await Promise.all([
-        projectRepo.findByUserId(db, session.user.id),
-        workspaceRepo.findByOwner(db, session.user.id),
-      ]);
+      // const [userProjects, userWorkspaces] = await Promise.all([
+      //   projectRepo.findByUserId(db, session.user.id),
+      //   workspaceRepo.findByOwner(db, session.user.id),
+      // ]);
 
-      setProjects(userProjects);
-      setWorkspaces(userWorkspaces);
+      // setProjects(userProjects);
+      // setWorkspaces(userWorkspaces);
       setError(null);
     } catch (err) {
       console.error('Failed to load data:', err);
@@ -77,27 +74,27 @@ export function ProjectManager({ onProjectsChange }: ProjectManagerProps) {
       setError(null);
       const db = getDatabase();
 
-      if (editingId) {
+      // if (editingId) {
         // Update existing project
-        await projectRepo.update(db, editingId, {
-          name: name.trim(),
-          description: description.trim() || null,
-          color: color || null,
-        });
-      } else {
-        // Create new project
-        await projectRepo.create(db, {
-          workspaceId: selectedWorkspaceId,
-          userId: session.user.id,
-          name: name.trim(),
-          description: description.trim() || null,
-          color: color || null,
-          completionPercentage: 0,
-        });
-      }
+      //   await projectRepo.update(db, editingId, {
+      //     name: name.trim(),
+      //     description: description.trim() || null,
+      //     color: color || null,
+      //   });
+      // } else {
+      //   // Create new project
+      //   await projectRepo.create(db, {
+      //     workspaceId: selectedWorkspaceId,
+      //     userId: session.user.id,
+      //     name: name.trim(),
+      //     description: description.trim() || null,
+      //     color: color || null,
+      //     completionPercentage: 0,
+      //   });
+      // }
 
       // Reset form and reload
-      resetForm();
+      // resetForm();
       await loadData();
       if (onProjectsChange) onProjectsChange();
     } catch (err) {
@@ -125,7 +122,7 @@ export function ProjectManager({ onProjectsChange }: ProjectManagerProps) {
     try {
       setLoading(true);
       const db = getDatabase();
-      await projectRepo.delete(db, id);
+      // await projectRepo.delete(db, id);
       await loadData();
       if (onProjectsChange) onProjectsChange();
       setError(null);

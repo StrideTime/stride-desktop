@@ -1,0 +1,177 @@
+@import 'tailwindcss';
+
+/* Scan @stridetime/ui dist for Tailwind class names used by shadcn components */
+@source "../../node_modules/@stridetime/ui/dist/index.es.js";
+
+/*
+ * Tailwind v4 theme configuration.
+ *
+ * The shadcn components in @stridetime/ui reference unprefixed CSS variables
+ * like var(--background), var(--primary), etc. (defined in :root below).
+ *
+ * Tailwind v4's @theme block maps those unprefixed vars to --color-* prefixed
+ * theme tokens, which auto-generate utility classes like bg-background,
+ * text-foreground, border-primary, etc.
+ */
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Border Radius — match stride-ui's --radius (0.625rem) */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 2px);
+  --radius-full: 9999px;
+}
+
+/*
+ * Light theme — colors from stride-ui globals.css (Figma Make design).
+ * These unprefixed variables are referenced directly by shadcn components
+ * and mapped to Tailwind v4 --color-* tokens via @theme above.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #ededf1;
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --ring: #717182;
+
+  /* Chart colors */
+  --chart-1: #e07a2f;
+  --chart-2: #1a9a8a;
+  --chart-3: #2a4c7a;
+  --chart-4: #c9a630;
+  --chart-5: #c4882e;
+
+  /* Sidebar */
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #e8e8e8;
+  --sidebar-ring: #717182;
+}
+
+/* Dark theme — One Dark inspired, from Figma Make */
+.dark {
+  --background: #282c34;
+  --foreground: #abb2bf;
+  --card: #2c313a;
+  --card-foreground: #abb2bf;
+  --popover: #2c313a;
+  --popover-foreground: #abb2bf;
+  --primary: #61afef;
+  --primary-foreground: #ffffff;
+  --secondary: #3e4451;
+  --secondary-foreground: #abb2bf;
+  --muted: #3e4451;
+  --muted-foreground: #848b98;
+  --accent: #3e4451;
+  --accent-foreground: #abb2bf;
+  --destructive: #e06c75;
+  --destructive-foreground: #ffffff;
+  --border: #3e4451;
+  --input: #3e4451;
+  --input-background: #21252b;
+  --switch-background: #3e4451;
+  --ring: #61afef;
+
+  /* Chart colors — One Dark palette */
+  --chart-1: #61afef;
+  --chart-2: #98c379;
+  --chart-3: #e5c07b;
+  --chart-4: #c678dd;
+  --chart-5: #e06c75;
+
+  /* Sidebar */
+  --sidebar: #21252b;
+  --sidebar-foreground: #abb2bf;
+  --sidebar-primary: #61afef;
+  --sidebar-primary-foreground: #282c34;
+  --sidebar-accent: #2c313a;
+  --sidebar-accent-foreground: #abb2bf;
+  --sidebar-border: #181a1f;
+  --sidebar-ring: #61afef;
+}
+
+/* Global Styles */
+* {
+  border-color: var(--border);
+}
+
+body {
+  /* background is transparent for native vibrancy — opaque bg applied at layout level */
+  color: var(--foreground);
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-foreground) 30%, transparent);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--muted-foreground) 50%, transparent);
+}

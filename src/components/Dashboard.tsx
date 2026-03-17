@@ -1,33 +1,11 @@
-import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { WorkspaceManager } from "./WorkspaceManager";
-import { ProjectManager } from "./ProjectManager";
-import { TaskManager } from "./TaskManager";
-import "./Dashboard.css";
+import { useAuth } from '../contexts/AuthContext';
+import { WorkspaceManager } from './WorkspaceManager';
+import { ProjectManager } from './ProjectManager';
+import { TaskManager } from './TaskManager';
 
 export function Dashboard() {
   const { session, signOut } = useAuth();
   const user = session?.user;
-
-  // Refresh counters to trigger re-renders
-  const [workspaceRefresh, setWorkspaceRefresh] = useState(0);
-  const [projectRefresh, setProjectRefresh] = useState(0);
-  const [taskRefresh, setTaskRefresh] = useState(0);
-
-  const handleWorkspacesChange = () => {
-    setWorkspaceRefresh(prev => prev + 1);
-    setProjectRefresh(prev => prev + 1);
-    setTaskRefresh(prev => prev + 1);
-  };
-
-  const handleProjectsChange = () => {
-    setProjectRefresh(prev => prev + 1);
-    setTaskRefresh(prev => prev + 1);
-  };
-
-  const handleTasksChange = () => {
-    setTaskRefresh(prev => prev + 1);
-  };
 
   return (
     <div className="dashboard-container">
@@ -59,26 +37,17 @@ export function Dashboard() {
 
         {/* Workspace Management - Testing Database Functionality */}
         <div className="workspaces-section">
-          <WorkspaceManager
-            key={`workspace-${workspaceRefresh}`}
-            onWorkspacesChange={handleWorkspacesChange}
-          />
+          <WorkspaceManager />
         </div>
 
         {/* Project Management - Testing Database Functionality */}
         <div className="projects-section">
-          <ProjectManager
-            key={`project-${projectRefresh}`}
-            onProjectsChange={handleProjectsChange}
-          />
+          <ProjectManager />
         </div>
 
         {/* Task Management - Testing Database Functionality */}
         <div className="tasks-section">
-          <TaskManager
-            key={`task-${taskRefresh}`}
-            onTasksChange={handleTasksChange}
-          />
+          <TaskManager />
         </div>
       </div>
     </div>

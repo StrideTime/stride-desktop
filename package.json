@@ -1,46 +1,61 @@
 {
- "name": "stride-desktop",
- "private": true,
- "version": "0.1.0",
- "type": "module",
- "scripts": {
-  "dev": "vite",
-  "build": "tsc && vite build",
-  "preview": "vite preview",
-  "tauri": "tauri",
-  "setup": "tsx scripts/setup-cli.ts",
-  "start": "./scripts/start-local.sh",
-  "stop": "supabase stop && docker compose down",
-  "reset": "supabase db reset && ./scripts/start-local.sh",
-  "db:reset": "./scripts/reset-db.sh",
-  "logs": "docker compose logs -f",
-  "studio": "open http://studio.stride.local",
-  "mailpit": "open http://localhost:8025",
-  "typecheck": "tsc --noEmit"
- },
- "dependencies": {
-  "@sentry/react": "^7.99.0",
-  "@stridetime/core": "^0.1.14",
-  "@stridetime/types": "^0.1.21",
-  "@supabase/supabase-js": "^2.95.0",
-  "@tauri-apps/api": "^2",
-  "@tauri-apps/plugin-opener": "^2",
-  "react": "^19.1.0",
-  "react-dom": "^19.1.0",
-  "react-router-dom": "^7.13.0"
- },
- "devDependencies": {
-  "@tauri-apps/cli": "^2",
-  "@types/inquirer": "^9.0.7",
-  "@types/js-yaml": "^4.0.9",
-  "@types/react": "^19.1.8",
-  "@types/react-dom": "^19.1.6",
-  "@vitejs/plugin-react": "^4.6.0",
-  "chalk": "^5.3.0",
-  "inquirer": "^9.2.12",
-  "js-yaml": "^4.1.0",
-  "tsx": "^4.7.0",
-  "typescript": "~5.8.3",
-  "vite": "^7.0.4"
- }
+  "name": "stride-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "setup": "tsx scripts/setup-cli.ts",
+    "start": "./scripts/start-local.sh",
+    "stop": "supabase stop && docker compose down",
+    "reset": "supabase db reset && ./scripts/start-local.sh",
+    "db:reset": "./scripts/reset-db.sh",
+    "logs": "docker compose logs -f",
+    "studio": "open http://studio.stride.local",
+    "mailpit": "open http://localhost:8025",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@powersync/react": "^1.8.2",
+    "@sentry/react": "^7.99.0",
+    "@stridetime/core": "^1.0.5-alpha.3",
+    "@stridetime/db": "^1.0.5-alpha.3",
+    "@stridetime/types": "^1.0.5-alpha",
+    "@stridetime/ui": "^1.0.5-alpha.4",
+    "@supabase/supabase-js": "^2.95.0",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.563.0",
+    "react": "^19.1.0",
+    "react-day-picker": "^9.13.2",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.13.0",
+    "sonner": "^2.0.7"
+  },
+  "pnpm": {
+    "overrides": {
+      "@powersync/common": "^1.47.0"
+    }
+  },
+  "devDependencies": {
+    "@storybook/react": "^10.2.8",
+    "@tailwindcss/vite": "^4.1.18",
+    "@tauri-apps/cli": "^2",
+    "@types/inquirer": "^9.0.7",
+    "@types/js-yaml": "^4.0.9",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12",
+    "js-yaml": "^4.1.0",
+    "tailwindcss": "^4.1.18",
+    "tsx": "^4.7.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4"
+  }
 }

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getDatabase,
-  workspaceRepo
 } from '@stridetime/core';
 
 import {
@@ -10,7 +9,6 @@ import {
   type Workspace
 } from "@stridetime/types";
 
-import './WorkspaceManager.css';
 
 interface WorkspaceManagerProps {
   onWorkspacesChange?: () => void;
@@ -38,8 +36,8 @@ export function WorkspaceManager({ onWorkspacesChange }: WorkspaceManagerProps) 
     try {
       setLoading(true);
       const db = getDatabase();
-      const userWorkspaces = await workspaceRepo.findByOwner(db, session.user.id);
-      setWorkspaces(userWorkspaces);
+      // const userWorkspaces = await workspaceRepo.findByOwner(db, session.user.id);
+      // setWorkspaces(userWorkspaces);
       setError(null);
     } catch (err) {
       console.error('Failed to load workspaces:', err);
@@ -63,20 +61,20 @@ export function WorkspaceManager({ onWorkspacesChange }: WorkspaceManagerProps) 
       setError(null);
       const db = getDatabase();
 
-      if (editingId) {
-        // Update existing workspace
-        await workspaceRepo.update(db, editingId, {
-          name: name.trim(),
-          type: type as typeof WorkspaceType[keyof typeof WorkspaceType],
-        });
-      } else {
-        // Create new workspace
-        await workspaceRepo.create(db, {
-          ownerUserId: session.user.id,
-          name: name.trim(),
-          type: type as typeof WorkspaceType[keyof typeof WorkspaceType],
-        });
-      }
+      // if (editingId) {
+      //   // Update existing workspace
+      //   await workspaceRepo.update(db, editingId, {
+      //     name: name.trim(),
+      //     type: type as typeof WorkspaceType[keyof typeof WorkspaceType],
+      //   });
+      // } else {
+      //   // Create new workspace
+      //   await workspaceRepo.create(db, {
+      //     ownerUserId: session.user.id,
+      //     name: name.trim(),
+      //     type: type as typeof WorkspaceType[keyof typeof WorkspaceType],
+      //   });
+      // }
 
       // Reset form and reload
       resetForm();
@@ -105,7 +103,7 @@ export function WorkspaceManager({ onWorkspacesChange }: WorkspaceManagerProps) 
     try {
       setLoading(true);
       const db = getDatabase();
-      await workspaceRepo.delete(db, id);
+      // await workspaceRepo.delete(db, id);
       await loadWorkspaces();
       if (onWorkspacesChange) onWorkspacesChange();
       setError(null);

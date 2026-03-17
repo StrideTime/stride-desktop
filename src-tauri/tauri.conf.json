@@ -10,17 +10,48 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "stride-desktop",
-        "width": 800,
-        "height": 600
+        "label": "main",
+        "title": "Stride",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "center": true,
+        "visible": true,
+        "decorations": true,
+        "resizable": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "trafficLightPosition": { "x": 16, "y": 22 },
+        "transparent": true,
+        "windowEffects": {
+          "effects": ["hudWindow"],
+          "state": "followsWindowActiveState"
+        }
+      },
+      {
+        "label": "tray-panel",
+        "title": "Stride",
+        "url": "/tray",
+        "width": 360,
+        "height": 520,
+        "visible": false,
+        "decorations": false,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false
       }
     ],
     "trayIcon": {
-      "title": "testing",
-      "tooltip": "this is a test",
-      "iconPath": "icons/32x32.png"
+      "id": "stride-tray",
+      "title": "Stride",
+      "tooltip": "Stride — Master Your Productivity",
+      "iconPath": "icons/32x32.png",
+      "iconAsTemplate": true
     },
     "security": {
       "csp": null

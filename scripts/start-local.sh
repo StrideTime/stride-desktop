@@ -22,8 +22,9 @@ fi
 ./scripts/setup-hosts.sh
 
 # Determine if self-hosting Supabase
+# Detect by checking if the Supabase URL points to a local address
 SELF_HOST_SUPABASE=false
-if grep -q "(will be auto-generated)" .env.local; then
+if grep -qE "VITE_SUPABASE_URL=http://(localhost|127\.0\.0\.1|supabase\.stride\.local)" .env.local; then
   SELF_HOST_SUPABASE=true
 fi
 
@@ -63,20 +64,42 @@ if [ "$SELF_HOST_SUPABASE" = true ]; then
     echo "✓ Supabase CLI installed"
   fi
 
-  echo "🐘 Starting Supabase..."
-  supabase start
+  # Check if Supabase is already running
+  if supabase status > /dev/null 2>&1; then
+    echo "✓ Supabase is already running"
+  else
+    echo "🐘 Starting Supabase..."
+    supabase start
 
-  # Wait for Supabase
-  echo "⏳ Waiting for Supabase..."
-  until supabase status > /dev/null 2>&1; do
-    sleep 2
-  done
+    # Wait for Supabase
+    echo "⏳ Waiting for Supabase..."
+    until supabase status > /dev/null 2>&1; do
+      sleep 2
+    done
+  fi
 
   # Extract keys and PostgreSQL URL
-  ANON_KEY=$(supabase status -o json | jq -r '.anon_key')
-  SERVICE_KEY=$(supabase status -o json | jq -r '.service_role_key')
-  JWT_SECRET=$(supabase status -o json | jq -r '.jwt_secret')
-  PG_URL=$(supabase status -o json | jq -r '.db_url')
+  # Note: supabase status may print non-JSON lines (e.g. "Stopped services: [...]")
+  # before the JSON output, so we use sed to extract only the JSON block.
+  SB_STATUS=$(supabase status -o json 2>/dev/null | sed -n '/^{/,/^}/p')
+  ANON_KEY=$(echo "$SB_STATUS" | jq -r '.ANON_KEY')
+  SERVICE_KEY=$(echo "$SB_STATUS" | jq -r '.SERVICE_ROLE_KEY')
+  JWT_SECRET=$(echo "$SB_STATUS" | jq -r '.JWT_SECRET')
+  PG_URL=$(echo "$SB_STATUS" | jq -r '.DB_URL')
+
+  # Wait for Postgres to actually accept connections
+  echo "⏳ Waiting for PostgreSQL to accept connections..."
+  for i in $(seq 1 30); do
+    if psql "$PG_URL" -c "SELECT 1" > /dev/null 2>&1; then
+      echo "✓ PostgreSQL is ready"
+      break
+    fi
+    if [ "$i" -eq 30 ]; then
+      echo "❌ PostgreSQL failed to become ready after 30 attempts"
+      exit 1
+    fi
+    sleep 2
+  done
 
   # Update .env.local
   sed -i.bak "s|VITE_SUPABASE_ANON_KEY=.*|VITE_SUPABASE_ANON_KEY=$ANON_KEY|" .env.local

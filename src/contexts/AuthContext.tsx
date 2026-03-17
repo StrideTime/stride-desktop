@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { createAuthService, connectSync, disconnectSync, isSyncEnabled } from "@stridetime/core";
+import { createAuthService, connectSync, disconnectSync, isSyncEnabled, getSyncStatus } from "@stridetime/core";
 import type { AuthSession, OAuthProvider } from "@stridetime/types";
+import { supabaseClient, dbReady } from "../lib/db";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -9,8 +10,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
  throw new Error("Missing Supabase environment variables");
 }
 
-// Initialize auth service (provider is created inside stride-core)
-const authService = createAuthService(supabaseUrl, supabaseAnonKey);
+// Initialize auth service with the shared Supabase client
+const authService = createAuthService(supabaseUrl, supabaseAnonKey, supabaseClient);
 
 interface AuthContextType {
  session: AuthSession | null;
@@ -33,28 +34,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
  const [session, setSession] = useState<AuthSession | null>(null);
  const [loading, setLoading] = useState(true);
+
+ // TODO: make this less jank. Really hate this implementation
  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
 
  useEffect(() => {
-  // Get initial session and connect sync if authenticated
+  // Get initial session
   authService.getCurrentSession().then(async (session) => {
    setSession(session);
    setLoading(false);
-
-   // If there's an existing session on startup, connect sync
-   if (session && isSyncEnabled()) {
-    try {
-     await connectSync();
-     console.log("✓ PowerSync connected (existing session)");
-    } catch (error) {
-     console.error("Failed to connect sync on startup:", error);
-    }
-   }
+   // Sync connection is handled by the onAuthChange listener
+   // (INITIAL_SESSION event) to avoid race conditions with DB init.
   });
 
   // Listen for auth changes
   const unsubscribe = authService.onAuthChange(async (session, event) => {
-   console.log("AuthContext - auth event:", event, "session:", !!session);
    setSession(session);
    setLoading(false);
 
@@ -62,21 +56,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsPasswordRecovery(true);
    }
 
-   // Connect sync when user signs in
-   if (session && event === "SIGNED_IN" && isSyncEnabled()) {
+   // Connect sync when user signs in or has existing session on refresh.
+   // INITIAL_SESSION fires on page refresh when a session already exists in localStorage.
+   // SIGNED_IN fires on explicit sign-in or OAuth callback.
+   // We must wait for the database to be initialized before checking isSyncEnabled(),
+   // because syncEnabled is only set to true during initDatabase(), which may not
+   // have been called yet when the auth event fires.
+   if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
+    console.log(`[AuthContext] Auth event: ${event}, user: ${session.user?.email}`);
+    console.log('[AuthContext] Waiting for dbReady...');
     try {
-     await connectSync();
-     console.log("✓ PowerSync connected (sign in)");
+     // TODO: Clean up the logic here. It is a little hairy and not entirely true from my understanding
+     await dbReady;
+     const syncStatus = getSyncStatus();
+     console.log('[AuthContext] dbReady resolved. isSyncEnabled():', isSyncEnabled(), 'syncState:', syncStatus.state);
+     if (isSyncEnabled() && syncStatus.state !== 'connected' && syncStatus.state !== 'connecting') {
+      // in this case, powersync db is initialized, but the sync status hasn't been completed yet. 
+      console.log('[AuthContext] Calling connectSync()...');
+      await connectSync();
+      console.log('[AuthContext] connectSync() complete ✓');
+     } else if (syncStatus.state === 'connected' || syncStatus.state === 'connecting') {
+      // in this case, powersync db is initialized, and sync is already connected
+      console.log('[AuthContext] Sync already connected/connecting — skipping duplicate connectSync()');
+     } else {
+      console.warn('[AuthContext] Sync is NOT enabled — skipping connectSync()');
+     }
     } catch (error) {
-     console.error("Failed to connect sync after sign in:", error);
+     console.error(`[AuthContext] Failed to connect sync (${event}):`, error);
     }
    }
 
+   // TODO: Verify if this also tears down the local db or if there are any issues to consider with residue from previous user's local db on auth change
    // Disconnect sync when user signs out
    if (!session && event === "SIGNED_OUT") {
     try {
      await disconnectSync();
-     console.log("✓ PowerSync disconnected (sign out)");
     } catch (error) {
      console.error("Failed to disconnect sync after sign out:", error);
     }
@@ -91,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   setSession(session);
  };
 
+ // TODO: Check if this does in fact force creata a new user in the users table. 
  const signUp = async (
   email: string,
   password: string,
@@ -113,7 +128,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (isSyncEnabled()) {
    try {
     await disconnectSync();
-    console.log("✓ PowerSync disconnected (explicit sign out)");
    } catch (error) {
     console.error("Failed to disconnect sync on sign out:", error);
    }
@@ -126,10 +140,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   await authService.resetPassword(email, {
    redirectTo: `${window.location.origin}/reset-password`,
   });
-  // Show success message to user
-  alert("Password reset email sent! Check your inbox.");
  };
 
+ // TODO: determine if I should keep this or only have a reset password option
  const updatePassword = async (newPassword: string) => {
   await authService.updatePassword(newPassword);
   setIsPasswordRecovery(false);

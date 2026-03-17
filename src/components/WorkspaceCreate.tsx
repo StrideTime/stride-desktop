@@ -9,7 +9,6 @@ import {
   type Workspace
 } from "@stridetime/types";
 
-import './WorkspaceCreate.css';
 
 interface WorkspaceCreateProps {
   onWorkspaceCreated?: (workspace: Workspace) => void;
